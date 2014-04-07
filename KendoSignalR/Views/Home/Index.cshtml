@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <span id="notification"></span>
+        <div id="grid"></div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script>
+        $(function () {
+            var connection = $.connection;
+            var hub = connection.gridHub;
+            var hubStart = connection.hub.start();
+
+            var signalRDataSource = new kendo.data.DataSource({
+                type: "signalr",
+                autoSync: true,
+                push: function (e) {
+                    var notification = $("#notification").data("kendoNotification");
+                    //notification.success(e.type);
+                },
+                schema: {
+                    model: {
+                        id: "Id",
+                        fields: {
+                            "Id": { editable: false, type: "Number" },
+                            "Name": { type: "string" },
+                            "Developer": { type: "string" }
+                        }
+                    }
+                },
+                transport: {
+                    signalr: {
+                        promise: hubStart,
+                        hub: hub,
+                        server: {
+                            read: "read",
+                            update: "update",
+                            destroy: "destroy",
+                            create: "create"
+                        },
+                        client: {
+                            read: "read",
+                            update: "update",
+                            destroy: "destroy",
+                            create: "create"
+                        }
+                    }
+                }
+            });
+
+            $("#grid").kendoGrid({
+                height: 300,
+                toolbar: ["create"],
+                editable: true,
+                columns: [
+                    "Name",
+                    "Developer",
+                    {
+                        command: [
+                          { name: "destroy", text: "Delete" }
+                        ]
+                    }
+                ],
+                dataSource: signalRDataSource
+            });
+
+            $("#notification").kendoNotification({
+                width: "100%",
+                position: {
+                    top: 0,
+                    left: 0
+                }
+            });
+        })
+    </script>
+
+}
+
