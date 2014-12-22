@@ -6,6 +6,12 @@ using System.Web;
 
 namespace KendoSignalR
 {
+    public class ReadRequestData
+    {
+        public string myParameter { get; set; }
+        public string myParameter2 { get; set; }
+
+    }
     public class GridHub : Hub
     {
         private GamesDbEntities db;
@@ -14,7 +20,7 @@ namespace KendoSignalR
             db = new GamesDbEntities();
         }
 
-        public IEnumerable<GameViewModel> Read()
+        public IEnumerable<GameViewModel> Read(ReadRequestData data)
         {
             return from game in db.Games
                    select new GameViewModel { Id = game.Id, Name = game.Name, Developer = game.Developer };

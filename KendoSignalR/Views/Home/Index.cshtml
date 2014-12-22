@@ -37,6 +37,14 @@
                     }
                 },
                 transport: {
+                    parameterMap: function (data, type) {
+                        if (type == "read") {
+                            data.myParameter = "this is some parameter value";
+                            data.myParameter2 = "this is some other parameter value";
+                        }
+
+                        return data;
+                    },
                     signalr: {
                         promise: hubStart,
                         hub: hub,
